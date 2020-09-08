@@ -1,0 +1,9 @@
+README.md
+setup.py
+deep_io/__init__.py
+deep_io/deep_io.py
+deep_io.egg-info/PKG-INFO
+deep_io.egg-info/SOURCES.txt
+deep_io.egg-info/dependency_links.txt
+deep_io.egg-info/requires.txt
+deep_io.egg-info/top_level.txt
