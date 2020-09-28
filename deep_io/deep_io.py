@@ -68,11 +68,11 @@ class DeepIO:
         """
         Send the new metadata to the connected remote peer.
 
-        Args:
-            metadata (str|dict): String or dictionary that describes the video source and its attributes.
+        # Arguments
+        metadata (str|dict): String or dictionary that describes the video source and its attributes.
 
-        Returns:
-            asyncio.Task: Sending task.
+        # Returns
+        asyncio.Task: Sending task.
         """        
         return asyncio.create_task(self.peer.send({'type': 'metadata', 'metadata': metadata}))
 

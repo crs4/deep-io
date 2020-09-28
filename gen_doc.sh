@@ -1,7 +1,7 @@
 #!/bin/sh
 intro="
-# DEEP-IO-PY
-\ndeep-io-py is the python module that provides the interface to communicate with the backend or core components 
+# DEEP-IO
+\ndeep-io provides an interface to communicate with the backend or core components 
 of real-time computer vision applications based on the [**DEEP-Framework**](https://github.com/crs4/deep_framework).
 This module provides a class called [DeepIO](#DeepIO) which manages the streaming of video and data to and from the 
 application core.

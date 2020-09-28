@@ -1,5 +1,5 @@
-# DEEP-IO-PY 
-deep-io-py is the python module that provides the interface to communicate with the backend or core components of real-time computer vision applications based on the [**DEEP-Framework**](https://github.com/crs4/deep_framework). This module provides a class called [DeepIO](#DeepIO) which manages the streaming of video and data to and from the application core. 
+# DEEP-IO 
+deep-io provides an interface to communicate with the backend or core components of real-time computer vision applications based on the [**DEEP-Framework**](https://github.com/crs4/deep_framework). This module provides a class called [DeepIO](#DeepIO) which manages the streaming of video and data to and from the application core. 
 
 # Features
 
@@ -47,11 +47,13 @@ DeepIO.send_metadata(self, metadata)
 
 Send the new metadata to the connected remote peer.
 
-Args:
-    metadata (str|dict): String or dictionary that describes the video source and its attributes.
+__Arguments__
 
-Returns:
-    asyncio.Task: Sending task.
+- __metadata (str|dict)__: String or dictionary that describes the video source and its attributes.
+
+__Returns__
+
+`asyncio.Task`: Sending task.
 
 ## run
 ```python
