@@ -4,6 +4,7 @@ import subprocess
 import ssl
 import logging
 import os
+import inspect
 
 ROOT = os.path.dirname(__file__)
 logging.basicConfig(level=logging.INFO)
@@ -41,8 +42,13 @@ class DeepIO:
             self.remotePeerType = 'stream_manager'
         else:
             self.remotePeerType = None
+        
+        self._frame_handlers = []
+        def frame_consumer(frame):
+            for handler in self._frame_handlers:
+                handler(frame)
 
-        self.peer = Peer(f'wss://{server_address}:{server_port}', id=peer_id, peer_type=peer_type, 
+        self.peer = Peer(f'wss://{server_address}:{server_port}', id=peer_id, peer_type=peer_type, frame_consumer=frame_consumer,
                         media_source=source, ssl_context=ssl_context, media_source_format=format)
         self.running = False
 
@@ -60,9 +66,18 @@ class DeepIO:
         Adds a function to the list of handlers to call whenever data is received.
 
         # Arguments
-        handler (function): A function that will be called with the an argument called 'data'. 
+        handler (function|coroutine): A function or asyncio coroutine that will be called with the data object. 
         """
         self.peer.add_data_handler(handler)
+
+    def add_frame_handler(self, handler):
+        """
+        Adds a function to the list of handlers to call whenever a frame is received.
+
+        # Arguments
+        handler (function): A function that will be called with the last received frame. 
+        """
+        self._frame_handlers.append(handler)
 
     def send_metadata(self, metadata):
         """

@@ -1,13 +1,13 @@
 Metadata-Version: 2.1
 Name: deep-io
-Version: 0.0.1
+Version: 0.0.2
 Summary: Python library for accessing the DEEP Framework
 Home-page: UNKNOWN
 Author: Jose F. Saenz-Cogollo
 Author-email: jsaenz@crs4.it
 License: UNKNOWN
-Description: # DEEP-IO-PY 
-        deep-io-py is the python module that provides the interface to communicate with the backend or core components of real-time computer vision applications based on the [**DEEP-Framework**](https://github.com/crs4/deep_framework). This module provides a class called [DeepIO](#DeepIO) which manages the streaming of video and data to and from the application core. 
+Description: # DEEP-IO 
+        deep-io provides an interface to communicate with the backend or core components of real-time computer vision applications based on the [**DEEP-Framework**](https://github.com/crs4/deep_framework). This module provides a class called [DeepIO](#DeepIO) which manages the streaming of video and data to and from the application core. 
         
         # Features
         
@@ -46,7 +46,18 @@ Description: # DEEP-IO-PY
         
         __Arguments__
         
-        - __handler (function)__: A function that will be called with the an argument called 'data'.
+        - __handler (function|coroutine)__: A function or asyncio coroutine that will be called with the data object.
+        
+        ## add_frame_handler
+        ```python
+        DeepIO.add_frame_handler(self, handler)
+        ```
+        
+        Adds a function to the list of handlers to call whenever a frame is received.
+        
+        __Arguments__
+        
+        - __handler (function)__: A function that will be called with the last received frame.
         
         ## send_metadata
         ```python
@@ -55,11 +66,13 @@ Description: # DEEP-IO-PY
         
         Send the new metadata to the connected remote peer.
         
-        Args:
-            metadata (str|dict): String or dictionary that describes the video source and its attributes.
+        __Arguments__
         
-        Returns:
-            asyncio.Task: Sending task.
+        - __metadata (str|dict)__: String or dictionary that describes the video source and its attributes.
+        
+        __Returns__
+        
+        `asyncio.Task`: Sending task.
         
         ## run
         ```python

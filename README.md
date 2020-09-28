@@ -38,7 +38,18 @@ Adds a function to the list of handlers to call whenever data is received.
 
 __Arguments__
 
-- __handler (function)__: A function that will be called with the an argument called 'data'.
+- __handler (function|coroutine)__: A function or asyncio coroutine that will be called with the data object.
+
+## add_frame_handler
+```python
+DeepIO.add_frame_handler(self, handler)
+```
+
+Adds a function to the list of handlers to call whenever a frame is received.
+
+__Arguments__
+
+- __handler (function)__: A function that will be called with the last received frame.
 
 ## send_metadata
 ```python
