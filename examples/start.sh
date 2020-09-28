@@ -5,6 +5,6 @@ export SOURCE_video_repo=/home/jsaenz/Datasets/Aeronike/VIRAT_S_040103_03_000284
 
 #export SOURCE_video_repo=/home/jsaenz/Datasets/Aeronike/uav0000150_02310_v.mp4 
 #export SOURCE_video_repo=/home/jsaenz/Datasets/Aeronike/DJI_0008.MP4 
-export REMOTE_PEER_TYPE=stream_manager
+export AUTO_CONNECT=True
 
 python stream_capture.py

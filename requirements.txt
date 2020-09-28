@@ -1,1 +1,2 @@
 git+https://github.com/crs4/hyperpeer-py
+pydoc-markdown==2.0.5
