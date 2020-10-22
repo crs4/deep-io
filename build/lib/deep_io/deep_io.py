@@ -30,13 +30,14 @@ class DeepIO:
     peer_type (str): Peer type. It's used by other peers to know the role of the peer in the current application. Default 'stream_capture'.
     format (str): Format of the video source. Defaults to autodetect.
     metadata (str|dict): String or dictionary that describes the video source and its attributes.
-    remotePeerId (str): ID of the remote peer. If specified it will specifically connect to that peer.
+    stream_manager_id (str): ID of the remote peer. If specified it will specifically connect to that peer.
     auto_connect (bool): If true it will automatically connect with the first stream_manager peer available otherwise it will wait for remote connections. Default `False`.
 
     """    
-    def __init__(self, server_address, server_port, source, peer_id, peer_type='stream_capture', format=None, metadata=None, remotePeerId=None, auto_connect=False):
+    def __init__(self, server_address, server_port, source, peer_id, peer_type='stream_capture', format=None, metadata=None, stream_manager_id=None, auto_connect=False, remotePeerId=None):
         self.id = peer_id
         self.metadata = metadata
+        self.stream_manager_id = stream_manager_id
         self.remotePeerId = remotePeerId
         if auto_connect:
             self.remotePeerType = 'stream_manager'
@@ -91,40 +92,47 @@ class DeepIO:
         """        
         return asyncio.create_task(self.peer.send({'type': 'metadata', 'metadata': metadata}))
 
-    async def _start(self):
+    async def start(self):
         await self.peer.open()
         self.peer.add_data_handler(self._on_data)
         try:
             while True:
-                if self.remotePeerId:
-                    await self.peer.connect_to(self.remotePeerId)
-                    logging.info(f'connected to %s', self.remotePeerId)
+                if self.stream_manager_id:
+                    await self.peer.connect_to(self.stream_manager_id)
+                    logging.info(f'connected to %s', self.stream_manager_id)
                 elif self.remotePeerType:
                     # List connected peers
                     peers = await self.peer.get_peers()
                     for peer in peers:
                         if peer['type'] == self.remotePeerType and not peer['busy']:
                             await self.peer.connect_to(peer['id'])
-                            logging.info(f'connected to {self.remotePeerType} with id: {self.remotePeerId}')
-                            await self.peer.send({'type': 'source', 'peerId': self.id})
+                            self.stream_manager_id = peer['id']
+                            logging.info(f'connected to {self.remotePeerType} with id: {self.stream_manager_id}')
+                            if self.remotePeerId:
+                                await self.peer.send({'type': 'source', 'peerId': self.remotePeerId})
+                            else:
+                                await self.peer.send({'type': 'source', 'peerId': self.id})
                             break
+                    if self.stream_manager_id == None:
+                        await asyncio.sleep(1)
+                        continue
                 else:
                     logging.info(f'[{self.id}]: Waiting peer connections...')
-                    self.remotePeerId = await self.peer.listen_connections()
-                    logging.info(f'[{self.id}]: Connection request from peer: {self.remotePeerId}')
+                    self.stream_manager_id = await self.peer.listen_connections()
+                    logging.info(f'[{self.id}]: Connection request from peer: {self.stream_manager_id}')
                     await self.peer.accept_connection()
                 await self.peer.send({'type': 'metadata', 'metadata': self.metadata})
                 while self.peer.readyState != PeerState.ONLINE:
                     await asyncio.sleep(1)
                 await asyncio.sleep(1)
-                self.remotePeerId = None
+                self.stream_manager_id = None
         except Exception as err:
             logging.error(f'[{self.id}]: Execution error: {err}')
-            #raise err
-        finally:
             await self.peer.close()
+            raise err
+        
     
-    async def _stop(self):
+    async def stop(self):
         await self.peer.close()
 
     def run(self):
@@ -140,12 +148,12 @@ class DeepIO:
         except:
             loop = asyncio.new_event_loop()
         try:
-            loop.run_until_complete(self._start())
-            #asyncio.run(asyncio.gather(demo1._start(), demo2._start()))
+            loop.run_until_complete(self.start())
+            #asyncio.run(asyncio.gather(demo1.start(), demo2.start()))
         except KeyboardInterrupt:
             logging.info(' -> End signal')
         finally:
             # cleanup
             logging.info(' -> Cleaning...')
-            loop.run_until_complete(self._stop())
+            loop.run_until_complete(self.stop())
 

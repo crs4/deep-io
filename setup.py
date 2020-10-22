@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="deep-io",
-    version="0.0.3",
+    version="0.1.1",
     author="Jose F. Saenz-Cogollo",
     author_email="jsaenz@crs4.it",
     description="Python library for accessing the DEEP Framework",
